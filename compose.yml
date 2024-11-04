@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      target: development
+      args:
+        NODE_VERSION: 22
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./data:/usr/src/app/data
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      - DB_PATH=/usr/src/app/data/database.sqlite
+    command: npm run dev
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    # Asegurar que el contenedor tenga suficientes privilegios para compilar
+    security_opt:
+      - no-new-privileges:false
+
+volumes:
+  data:
+    driver: local
